@@ -1,0 +1,400 @@
+
+
+{% assign case = desk.page.content.case %}
+<div id="desk-external-variables-myaccount" class="desk-external-variables">
+  <div id="system-snippets-reply_required">{{system.snippets.message_required}}</div>
+</div>
+<div id='breadcrumbs'>
+  <a href='{{desk.system.links.home}}'>{{desk.system.snippets.home}}</a> &rsaquo; <a href='{{ desk.system.links.myportal }}'>{{desk.system.snippets.my_cases}}</a> &rsaquo; {{case.subject | clip:30 }}
+</div>
+
+<div id="status-update">
+  {{resolve_or_reopen_button}}
+</div>
+
+<div id='support-main'>
+  <div class='support-body myportal'>
+    <div class='content case'>
+      <div class='case-details'>
+        <h3>{{case.subject}}</h3>
+        <div class='status'>
+          <img src='{{ case.channel_icon }}'/>
+          {% if case.is_twitter_channel? %}
+          {% elsif case.is_facebook_channel? %}
+          {% else %}
+          <span class='a-{{case.status.name}}'>
+            {% case case.status.id %}
+              {% when 10 %}
+                  {{desk.system.snippets.case_new}}
+              {% when 30 %}
+                  {{desk.system.snippets.case_open}}
+              {% when 50 %}
+                  {{desk.system.snippets.case_pending}}
+              {% when 70 %}
+                  {{desk.system.snippets.case_resolved}}
+              {% when 90 %}
+                  {{desk.system.snippets.case_closed}}
+            {% endcase %}
+          </span>
+          {% endif %}
+        </div>
+        <div class='meta'>
+          <ul class='case-data'>
+            <li>
+              <strong>{{desk.system.snippets.case_id}}:</strong>
+              <span>{{case.id}}</span>
+            </li>
+            <li>
+              <strong>Priority:</strong>
+              <span>{{case.custom_priority}}</span>
+            </li>
+            <li>
+              <strong>Status:</strong>
+              <span>{{case.custom_scw_state}}</span>
+            </li>
+            <li>
+              <strong>Design Status:</strong>
+              <span>{{case.custom_design_status}}</span>
+            </li>
+            <li>
+              <strong>Software Version:</strong>
+              <span>{{case.custom_scos_version}}</span>
+            </li>
+            <li>
+              <strong>Hardware Version:</strong>
+              <span>{{case.custom_hardware_version}}</span>
+            </li>
+            <li>
+              <strong>SpiderNet Version:</strong>
+              <span>{{case.custom_spidernet_version}}</span>
+            </li>
+            <li>
+              <strong>Site or Customer Location:</strong>
+              <span>{{case.custom_site_or_customer_location}}</span>
+            </li>
+            <li>
+              <strong>UE Model (if applicable):</strong>
+              <span>{{case.custom_ue_model_if_applicable}}</span>
+            </li>
+            <li>
+              <strong>Jira(s) created by SpiderCloud:</strong>
+              <span>{{case.jira_s_created}}</span>
+            </li>
+            <li>
+              <strong>Issue Type:</strong>
+              <span>{{case.custom_issue_type}}</span>
+            </li>
+            <li>
+              <strong>Answer Code:</strong>
+              <span>{{case.custom_answer code}}</span>
+            </li>
+            <li>
+              <strong>{{desk.system.snippets.assigned_agent}}:</strong>
+              <span>{{case.user.name_public | show_something: desk.system.snippets.unassigned}}</span>
+            </li>
+          </ul>
+         <ul class='case-dates'>
+            {% if case.is_twitter_channel? %}
+              <li>
+                <strong>{{desk.system.snippets.status}}:</strong>
+                  {% case case.status.id %}
+                    {% when 10 %}
+                        {{desk.system.snippets.case_new}}
+                    {% when 30 %}
+                        {{desk.system.snippets.case_open}}
+                    {% when 50 %}
+                        {{desk.system.snippets.case_pending}}
+                    {% when 70 %}
+                        {{desk.system.snippets.case_resolved}}
+                    {% when 90 %}
+                        {{desk.system.snippets.case_closed}}
+                  {% endcase %}
+              </li>
+            {% elsif case.is_facebook_channel? %}
+              <li>
+                <strong>{{desk.system.snippets.status}}:</strong>
+                  {% case case.status.id %}
+                    {% when 10 %}
+                        {{desk.system.snippets.case_new}}
+                    {% when 30 %}
+                        {{desk.system.snippets.case_open}}
+                    {% when 50 %}
+                        {{desk.system.snippets.case_pending}}
+                    {% when 70 %}
+                        {{desk.system.snippets.case_resolved}}
+                    {% when 90 %}
+                        {{desk.system.snippets.case_closed}}
+                  {% endcase %}
+              </li>
+            {% endif %}
+            <!--<li>
+              <strong>{{desk.system.snippets.updated}}:</strong>
+              <span class="date">{{case.updated_at | in_time_zone: site.timezone | date: '%b %d, %Y %I:%M%p %Z' }}</span>
+            </li>
+            <li>
+              <strong>{{desk.system.snippets.created}}:</strong>
+              <span class="date">{{case.created_at | in_time_zone: site.timezone | date: '%b %d, %Y %I:%M%p %Z' }}</span>
+            </li>-->
+          </ul>
+          <div style="clear:both"></div>
+        </div>
+      </div>
+      <div class='interactions'>
+      {% if case.is_email_channel? %}
+        {% for email in case.emails %}
+        <div class='interaction'>
+          <span class='gravatar-wrapper'>
+            {% if email.inbound? %}
+              {% if case.customer.facebook.profile_image_url != nil %}
+                <img src="{{ case.customer.facebook.profile_image_url }}" class="gravatar" />
+              {% elsif case.customer.twitter.profile_image_url != nil %}
+                <img src="{{ case.customer.twitter.profile_image_url }}" width="48" height="48" class="gravatar twitter-avatar" />
+              {% else %}
+                {{ email.from | gravatar_image: gravatar_unknown_user,   ssl }}
+              {% endif %}
+            {% else %}
+              {{ email.agent.email | gravatar_image: gravatar_unknown_user,   ssl }}
+            {% endif %}
+          </span>
+          <div class='interaction-details'>
+            <div class='meta'>
+              {% if email.inbound? %}
+                <span>{{email.from_name | show_something: case.customer.name}}</span>
+              {% else %}
+                <span>{{email.agent.name_public}}</span>
+              {% endif %}
+              <span class='date'>{{email.updated_at | in_time_zone: site.timezone | date: '%b %d, %Y %I:%M%p' }}</span>
+            </div>
+            {% if email.is_erased? %}
+              {% capture params %}"name":"{{email.erased_by.name}}"{% endcapture %}
+              <div class='interaction-body'>{{desk.system.snippets.content_erased | format_snippet: params }}</div>
+            {% else %}
+              <div class='interaction-body'>{{ email.new_html | escape_newlines }}</div>
+            {% endif %}
+            {% if email.attachments.size > 0 %}
+              {{desk.system.snippets.attachments}}
+              {% for attachment in email.attachments %}
+                | <a target="_blank" href="{{attachment.url}}">{{attachment.file_name}}</a>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% elsif case.is_qna_channel? %}
+        {% assign question = case.question %}
+        {% if question.hidden? %}
+          <div class='interaction'>
+            <h1>{{system.snippets.not_posted_question_yet}}</h1>
+          </div>
+        {% else %}
+          <div class='interaction'>
+            <span class='gravatar-wrapper'>
+              {% if case.customer.facebook.profile_image_url != nil %}
+                <img src="{{ case.customer.facebook.profile_image_url }}" class="gravatar" />
+              {% elsif case.customer.twitter.profile_image_url != nil %}
+                <img src="{{ case.customer.twitter.profile_image_url }}" width="48" height="48" class="gravatar twitter-avatar" />
+              {% else %}
+                {{ question.from_email | gravatar_image: gravatar_unknown_user,   ssl }}
+              {% endif %}
+            </span>
+            <div class='interaction-details'>
+              <div class='meta'>
+                <span>{{question.from_name | show_something: case.customer.name}}</span>
+                <span class='date'>{{question.updated_at | in_time_zone: site.timezone | date: '%b %d, %Y %I:%M%p %Z' }}</span>
+              </div>
+              <div class='interaction-body'>{{ question.body_plain | escape_newlines }}</div>
+            </div>
+          </div>
+          {% for answer in case.answers %}
+          <div class='interaction'>
+            <span class='gravatar-wrapper'>
+              {% if answer.inbound? %}
+                {% if answer.customer.facebook.profile_image_url != nil %}
+                  <img src="{{ answer.customer.facebook.profile_image_url }}" class="gravatar" />
+                {% elsif answer.customer.twitter.profile_image_url != nil %}
+                  <img src="{{ answer.customer.twitter.profile_image_url }}" width="48" height="48" class="gravatar twitter-avatar" />
+                {% else %}
+                  {{ answer.from_email | gravatar_image: gravatar_unknown_user,   ssl }}
+                {% endif %}
+              {% else %}
+                {{ answer.agent.email | gravatar_image: gravatar_unknown_user,   ssl }}
+              {% endif %}
+            </span>
+            <div class='interaction-details'>
+              <div class='meta'>
+                {% if answer.inbound? %}
+                  <span>{{answer.from_name | show_something: case.customer.name}}</span>
+                {% else %}
+                  <span>{{answer.agent.name_public}}</span>
+                {% endif %}
+                <span class='date'>{{answer.updated_at | in_time_zone: site.timezone | date: '%b %d, %Y %I:%M%p %Z' }}</span>
+              </div>
+              {% if answer.is_erased? %}
+                {% capture params %}"name":"{{answer.erased_by.name}}"{% endcapture %}
+                <div class='interaction-body'>{{desk.system.snippets.content_erased | format_snippet: params }}</div>
+              {% else %}
+                <div class='interaction-body'>{{ answer.body_plain | escape_newlines }}</div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        {% endif %}
+      {% elsif case.is_chat_channel? %}
+        {% assign chat = case.chat %}
+        {% for message in chat.messages %}
+          {% if message.from_system? %}
+            <div class='system-message'>
+              <span>{{message.text}}</span> at {{message.updated_at | in_time_zone: site.timezone | date: '%I:%M%p' }}</span>
+            </div>
+          {% else %}
+            <div class='interaction chat'>
+              <div class='interaction-details'>
+                <div class='meta'>
+                  <span>{{message.user.name}}</span>
+                  <span class='date'>{{message.updated_at | in_time_zone: site.timezone | date: '%I:%M%p' }}</span>
+                </div>
+                 <div class='interaction-body'>{{ message.text | escape_newlines }}</div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% elsif case.is_twitter_channel? %}
+        {% for tweet in case.tweets %}
+          {% assign reply_to = tweet.public_url %}
+          {% assign tweet_dm = tweet.dm %}
+          <div class='interaction'>
+            <span class='gravatar-wrapper'>
+              {% if tweet.inbound? %}
+                <img src="{{ case.customer.twitter.profile_image_url }}" width="48" height="48" class="gravatar twitter-avatar" />
+              {% else %}
+                {{ tweet.agent.email | gravatar_image: gravatar_unknown_user,   ssl }}
+              {% endif %}
+            </span>
+            <div class='interaction-details'>
+              <div class='meta'>
+                {% if tweet.inbound? %}
+                  <span><a href="http://twitter.com/{{ tweet.twitter_customer.login }}" target="_blank">{{case.customer.name}}</a> via {{ tweet.twitter_customer.login }}</span>
+                {% else %}
+                  <span>{{tweet.agent.name_public}}</span>
+                {% endif %}
+                <span class='date'>{{tweet.updated_at | in_time_zone: site.timezone | date: '%b %d, %Y %I:%M%p' }}</span>
+              </div>
+              {% if tweet.is_erased? %}
+                {% capture params %}"name":"{{tweet.erased_by.name}}"{% endcapture %}
+                <div class='interaction-body'>{{desk.system.snippets.content_erased | format_snippet: params }}</div>
+              {% else %}
+                <div class='interaction-body'>{{ tweet.subject | escape_newlines }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+        <div style="clear:both;"></div>
+        <div class="case-footer">
+          {% if tweet_dm %}
+          <p>This is a private message (Direct Message). Please log into <a href="http://www.twitter.com" target="_blank">Twitter</a> to view and reply to this thread.</p>
+          {% else %}
+          <p><a href="{{ reply_to }}" target="_blank">View and reply to this tweet on Twitter</a></p>
+          {% endif %}
+        </div>
+      {% elsif case.is_facebook_channel? %}
+        {% for facebook_feeds in case.facebook_feed_items_non_draft %}
+          {% assign thread_url = facebook_feeds.public_url %}
+          <div class='interaction'>
+            <span class='gravatar-wrapper'>
+              {% if case.customer.id == facebook_feeds.from_customer.id %}
+                {% if case.customer.facebook.profile_image_url != nil %}
+                  <img src="{{ case.customer.facebook.profile_image_url }}" class="gravatar" />
+                {% else %}
+                  {{ facebook_feeds.agent.email | gravatar_image: gravatar_unknown_user,   ssl }}
+                {% endif %}
+              {% else %}
+                {{ facebook_feeds.agent.email | gravatar_image: gravatar_unknown_user,   ssl }}
+              {% endif %}
+            </span>
+            <div class='interaction-details'>
+              <div class='meta'>
+                {% if facebook_feeds.agent == nil %}
+                  <span>{{ facebook_feeds.from_customer.name_public }}</span>
+                {% else %}
+                  <span>{{ facebook_feeds.agent.name }} via {{ facebook_feeds.from_customer.name_public }}</span>
+                {% endif %}
+                <span class='date'>{{facebook_feeds.updated_at | in_time_zone: site.timezone | date: '%b %d, %Y %I:%M%p' }}</span>
+              </div>
+              {% if facebook_feeds.is_erased? %}
+                {% capture params %}"name":"{{facebook_feeds.erased_by.name}}"{% endcapture %}
+                <div class='interaction-body'>{{desk.system.snippets.content_erased | format_snippet: params }}</div>
+              {% else %}
+                <div class='interaction-body'>{{ facebook_feeds.message | escape_newlines }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+        <div class="case-footer">
+          <p><a href="{{ thread_url }}" target="_blank">View and reply to this thread on Facebook</a></p>
+        </div>
+      {% elsif case.is_phone_channel? %}
+        <div class='interaction'>
+          {{ case.description | escape_newlines }}
+        </div>
+      {% endif %}
+      </div>
+      {% if case.can_accept_replies and case.customer.id == desk.customer.id %}
+        <div id="desk-external-variables-email_new" class="desk-external-variables">
+          <div id="max_number_attachments">{{desk.system.max_attachments}}</div>
+          <div id="system-snippets-add_attachment">{{system.snippets.add_attachment}}</div>
+        </div>
+        <div style="clear:both;"></div>
+            <div id="form" class="{% if case.resolved? %}hidden{% endif %}">
+            {% if case.is_email_channel? %}
+              {% if case.customer.id == desk.customer.id %}
+              {{form_begin}}
+              {% else %}
+                <form action="https://files.spidercloud.com/DeskForwarder/case_reply.php" enctype="multipart/form-data" class="new_reply" id="new_reply" method="post">
+                <input id="interaction_ticket_id" name="interaction[caseId]" type="hidden" value="{{case.id}}">
+                <input id="interaction_desk_customer_email" name="interaction[fromEmail]" type="hidden" value="{{desk.customer.email}}">
+                <input id="interaction_case_customer_email" name="interaction[toEmail]" type="hidden" value="{{case.customer.email}}">
+                <input id="interaction_auth_key" name="interaction[authKey]" type="hidden" value="43426a06-3886-4c20-92a0-d4784c2e3990">
+              {% endif %}
+                <div class='input-block'>
+                  <h4>{{desk.system.snippets.reply_to_this_case}}</h4>
+                  <div>
+                    <textarea id="interaction_body" name="interaction[body]"></textarea>
+                  </div>
+                </div>
+                <div class='input-block'>
+                  <span class='label'>
+                    {{system.snippets.file_attachment}}
+                  </span>
+                  <div class="desk_file_upload">
+                    <input name="case_attachment[attachment]" size="84" type="file"/>
+                    <div class="faux-file-field">
+                      <input type="text" disabled="disabled"/>
+                    </div>
+                    <input type="button" value="{{system.snippets.choose_file}}"/>
+                  </div>
+                </div>
+                <br/>
+                <div class='input-button'>
+                  <input id='reply_submit' name='commit' type='submit' value='{{system.snippets.send_text}}' />
+                </div>
+              {{form_end}}
+            {% else %}
+              {{form_begin}}
+                <div class='input-block'>
+                  <h4>{{system.snippets.post_public_answer}}</h4>
+                  <div>
+                    <textarea id="interaction_body" name="interaction[body]"></textarea>
+                  </div>
+                </div><br/>
+                <div class='input-button'>
+                  <input id='reply_submit' name='commit' type='submit' value='{{system.snippets.post_answer}}' />
+                </div>
+              {{form_end}}
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+</div>
+<script type="text/javascript" src="{{desk_javascript_host}}portal/desk.portal.body.myportal_show.js"></script>
+
