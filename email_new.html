@@ -18,7 +18,10 @@
     <div class='content'>
       <h3>{{system.snippets.email_us}}</h3>
       <div id='form'>
-        {{form_begin|replace:'/portal/emails/pre_create','/portal/emails'}}
+        <form action="https://files.spidercloud.com/DeskForwarder/case_new_attachment.php" enctype="multipart/form-data" class="new_case" id="new_case" method="post">
+          <input id="email_desk_customer_email" name="email[fromEmail]" type="hidden" value="{{desk.customer.email}}">
+          <input id="email_auth_key" name="email[authKey]" type="hidden" value="91414da8-c679-11e6-9d9d-cec0c932ce01">
+
           {% if current_user == nil or current_user.is_guest %}
             <div class='input-block'>
               <span class='label'>
