@@ -1,0 +1,135 @@
+
+<div id="desk-external-variables-email_new" class="desk-external-variables">
+  <div id="system-snippets-name_required">{{system.snippets.name_required}}</div>
+  <div id="system-snippets-email_required">{{system.snippets.email_required}}</div>
+  <div id="system-snippets-invalid_email">{{system.snippets.invalid_email}}</div>
+  <div id="system-snippets-subject_required">{{system.snippets.subject_required}}</div>
+  <div id="system-snippets-question_required">{{system.snippets.question_required}}</div>
+  <div id="system-snippets-exceeding_max_chars">{{system.snippets.exceeding_max_chars}}</div>
+  <div id="max_number_attachments">{{desk.system.max_attachments}}</div>
+  <div id="system-snippets-add_attachment">{{system.snippets.add_attachment}}</div>
+</div>
+
+<div id='breadcrumbs'>
+  <a href='{{desk.system.links.home}}'>{{system.snippets.home}}</a> &rsaquo; {{system.snippets.email_us}}
+</div>
+<div id='support-main'>
+  <div class='support-body'>
+    <div class='content'>
+      <h3>{{system.snippets.email_us}}</h3>
+      <div id='form'>
+        {{form_begin|replace:'/portal/emails/pre_create','/portal/emails'}}
+          {% if current_user == nil or current_user.is_guest %}
+            <div class='input-block'>
+              <span class='label'>
+                {{system.snippets.your_name}} <span>({{system.snippets.required}})</span>
+              </span>
+              <div>
+                <input value='{{ interaction.name }}' id='interaction_name' maxlength='100' name='interaction[name]' type='text' />
+              </div>
+            </div>
+            <div class='input-block'>
+              <span class='label'>
+                {{system.snippets.your_email}} <span>({{system.snippets.required}})</span>
+              </span>
+              <div>
+                <input value='{{ interaction.email }}' id='interaction_email' maxlength='100' name='interaction[email]' type='text' />
+              </div>
+            </div>
+          {% endif %}
+              <div class='input-block'>
+            <span class='label'>
+              {{system.snippets.subject}} <span>({{system.snippets.required}})</span>
+            </span>
+            <div>
+              <input id='email_subject' maxlength='100' name='email[subject]' type='text' value='{% if search_term and search_term != '' %}{{search_term}}{% else %}{{email.subject}}{%endif%}'/>
+            </div>
+          </div>
+          <div class='input-block'>
+            <span class='label'>
+              Description <span>({{system.snippets.required}})</span>
+            </span>
+            <div>
+              <textarea id='email_body' name='email[body]'>{{email.body}}</textarea>
+            </div>
+          </div>
+          <div class="form-group div-Priority">
+             <label for="ticket_custom_priority" class="control-label">
+                Priority ({{system.snippets.required}}):</label>&nbsp;{{ ticket_custom_priority }}
+            </div><br />    
+          <div class="form-group div-SCOS-Version">
+             <label for="ticket_custom_scos_version" class="control-label">
+                SCOS Version ({{system.snippets.required}}):</label>&nbsp;{{ ticket_custom_scos_version }}
+            </div><br />
+            <div class="form-group div-SpiderNet-Version">
+             <label for="ticket_custom_spidernet_version" class="control-label">
+                SpiderNet Version:</label>&nbsp;{{ ticket_custom_spidernet_version }}
+            </div><br />
+            <div class="form-group div-Hardware-Version">
+             <label for="ticket_custom_hardware_version" class="control-label">
+                Hardware Version:</label>&nbsp;{{ ticket_custom_hardware_version }}
+            </div><br />
+            <div class="form-group div-Site-Or-Customer-Location">
+             <label for="ticket_custom_site_or_customer_location" class="control-label">
+                Site or Customer Location ({{system.snippets.required}}):</label>&nbsp;{{ ticket_custom_site_or_customer_location }}
+            </div><br />
+            <div class="form-group div-customerBugTrackingNumber">
+             <label for="ticket_custom_customer_bug_tracking_number" class="control-label">
+                Customer Bug Tracking Number:</label>&nbsp;{{ ticket_custom_customer_bug_tracking_number }}
+            </div><br />
+            <div class="form-group div-ueModel">
+             <label for="ticket_custom_ue_model_if_applicable" class="control-label">
+                UE Model (if applicable):</label>&nbsp;{{ ticket_custom_ue_model_if_applicable }}
+            </div><br />
+            <div class="form-group div-Issue-Type">
+             <label for="ticket_custom_issue_type" class="control-label">
+                Issue Type:</label>&nbsp;{{ ticket_custom_issue_type }}
+            </div><br />
+            <script>
+              $(document).ready(function () {
+  $(".div-Priority select").rules("add", { required:true, messages: { required: "Priority is required." } });
+  $(".div-SCOS-Version select").rules("add", { required:true, messages: { required: "SCOS Version is required." } });  
+  $(".div-Site-Or-Customer-Location select").rules("add", { required:true, messages: { required: "Site or Customer Location is required." } });
+           </script>
+          <div class='input-block'>
+            <span class='label'>
+              {{system.snippets.file_attachment}}
+            </span>
+            <div class="desk_file_upload">
+              <input name="case_attachment[attachment]" size="84" type="file"/>
+              <div class="faux-file-field">
+                <input type="text" disabled="disabled"/>
+              </div>
+              <input type="button" value="{{system.snippets.choose_file}}"/>
+            </div>
+          </div><br/>
+          <div class='input-button'>
+            <input id='email_submit' name='commit' type='submit' value='{{system.snippets.send_email}}' />
+            <img alt='Ajax-loader-small' id='email_submit_spinner' src='{{ "/images/ajax-loader-small.gif" | portal_image_url: image_asset_host }}' style='display: none; margin: 7px 0 0 5px; position: absolute;' />
+          </div>
+        {{form_end}}
+      </div>
+    </div>
+  </div>
+  <!--
+  ***************
+  The following attribution needs to remain as is in terms of wording with the appropriate link back to desk.com as per our terms of service: http://www.desk.com/terms
+  If you would like, you may change the location or the styling to better match your site, but the content and the link must remain in the template and visible to end users.
+  ****************
+  -->
+  <div id='footer'>
+    {{ desk.page.theme.footer_content }}
+    {% if site.seo_footer %}
+      <div class="powered_by_desk powered_by_desk_v2">Powered By
+        <a class="powered_by_logo powered_by_logo_v2" href="http://www.desk.com">
+          <div>Desk.com</div><div> Customer Service and Helpdesk Ticket Software</div></a>
+      </div>
+    {% else %}
+      <div class="powered_by_desk">
+        <a href='http://www.desk.com'><div class="powered_by_logo"></div></a>
+        Powered by &nbsp;Desk.com
+      </div>
+    {% endif %}
+  </div>
+</div>
+<script type="text/javascript" src="{{desk_javascript_host}}portal/desk.portal.body.email_new.js"></script>
