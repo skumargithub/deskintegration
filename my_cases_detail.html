@@ -346,12 +346,13 @@
         <div style="clear:both;"></div>
             <div id="form" class="{% if case.resolved? %}hidden{% endif %}">
             {% if case.is_email_channel? %}
-                <form action="https://files.spidercloud.com/DeskForwarder/case_reply_attachment.php" enctype="multipart/form-data" class="new_reply" id="new_reply" method="post">
+              
+            <form action="https://files.spidercloud.com/DeskForwarder/case_reply_attachment.php" enctype="multipart/form-data" class="new_reply" id="new_reply" method="post">
                 <input id="interaction_ticket_id" name="interaction[caseId]" type="hidden" value="{{case.id}}">
-                <input id="interaction_desk_customer_email" name="interaction[fromEmail]" type="hidden" value="{{desk.customer.email}}">
-                <input id="interaction_case_customer_email" name="interaction[toEmail]" type="hidden" value="{{case.customer.email}}">
+                <input id="interaction_desk_customer_email" name="interaction[fromEmail]" type="hidden" value="{{desk.customer.name}} <{{desk.customer.email}}>">
+                <input id="interaction_case_customer_email" name="interaction[toEmail]" type="hidden" value="{{case.customer.name}} <{{case.customer.email}}>">
                 <input id="interaction_auth_key" name="interaction[authKey]" type="hidden" value="43426a06-3886-4c20-92a0-d4784c2e3990">
-
+              
                 <div class='input-block'>
                   <h4>{{desk.system.snippets.reply_to_this_case}}</h4>
                   <div>
