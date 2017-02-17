@@ -1,4 +1,3 @@
-
 <div id="desk-external-variables-email_new" class="desk-external-variables">
   <div id="system-snippets-name_required">{{system.snippets.name_required}}</div>
   <div id="system-snippets-email_required">{{system.snippets.email_required}}</div>
@@ -19,8 +18,8 @@
       <h3>{{system.snippets.email_us}}</h3>
       <div id='form'>
         <form action="https://files.spidercloud.com/DeskForwarder/case_new_attachment.php" enctype="multipart/form-data" class="new_case" id="new_case" method="post">
-          <input id="email_desk_customer_email" name="email[fromEmail]" type="hidden" value="{{desk.customer.email}}">
-          <input id="email_auth_key" name="email[authKey]" type="hidden" value="91414da8-c679-11e6-9d9d-cec0c932ce01">
+          <input id="email_desk_customer_email" name="email[fromEmail]" type="hidden" value="{{desk.customer.name}} <{{desk.customer.email}}>" />
+          <input id="email_auth_key" name="email[authKey]" type="hidden" value="91414da8-c679-11e6-9d9d-cec0c932ce01" />
 
           {% if current_user == nil or current_user.is_guest %}
             <div class='input-block'>
@@ -78,7 +77,7 @@
             </div><br />
             <div class="form-group div-customerBugTrackingNumber">
              <label for="ticket_custom_customer_bug_tracking_number" class="control-label">
-                Customer Bug Tracking Number:</label>&nbsp;{{ ticket_custom_customer_bug_tracking_number }}
+                Your Ticket or Tracking Number:</label>&nbsp;{{ ticket_custom_customer_bug_tracking_number }}
             </div><br />
             <div class="form-group div-ueModel">
              <label for="ticket_custom_ue_model_if_applicable" class="control-label">
